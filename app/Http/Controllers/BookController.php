@@ -25,10 +25,27 @@ class BookController extends Controller
             'title' => 'required',
             'author' => 'required',
             'year' => 'required|integer',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        
+        $cover = $request->file('cover');
+        $cover->storeAs('public', $cover->hashName());
+
+        Book::create([
+            'title' => $request->title,
+            'author' => $request->author,
+            'year' => $request->year,
+            'description' => $request->description,
+            'cover' => $cover->hashName(),
         ]);
 
-        Book::create($request->all());
+        // Book::create($request->all());
 
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
+    }
+
+    public function edit (Book $book)
+    {
+        return view('books.edit', compact('book'));
     }
 }

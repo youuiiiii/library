@@ -19,7 +19,12 @@
                         @foreach ($books as $book)
                             <div class="border-b border-gray-200 p-4">
                                 
-                                <img src="{{ url('storage/'. $book->cover) }}" alt="" class="">
+                                <div class="w-full h-48 flex items-center justify-center border border-gray-300 bg-gray-100 rounded-md overflow-hidden">
+                                    <img src="{{ $book->cover ? url('storage/'. $book->cover) : asset('no-image-placeholder.jpg') }}" 
+                                         alt="Book Cover" 
+                                         class="object-cover w-full h-full">
+                                </div>
+
                                 <div class="my-4">
                                     <h3 class="text-xl font-bold">{{ $book->title }}</h3>
                                     <p class="text-sm">{{ $book->author }}</p>
@@ -27,7 +32,9 @@
                                     <p class="text-sm">{{ $book->description }}</p>
                                 </div>
 
-                                <button class="bg-blue-400 px-10 py-2 w-full rounded-md font-semibold">Edit</button>
+                                <a href="{{ route('books.edit', $book) }}">
+                                    <button class="bg-blue-400 px-10 py-2 rounded-md font-semibold">Edit</button>
+                                </a>
                             </div>
                         @endforeach
                     </div>

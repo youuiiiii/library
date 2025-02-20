@@ -5,7 +5,7 @@
                 <div class="p-6 text-gray-900">
                     
                     <div class="flex justify-between items-center">
-                        <h2>Add Book</h2>
+                        <h2>Edit Book</h2>
                     </div>
 
                     <div class="mt-4" x-data="{ imageUrl: '/storage/no-image-placeholder.jpg' }">
@@ -59,8 +59,6 @@
 
                         </form>
                     </div>
-
-
 
                 </div>
             </div>
