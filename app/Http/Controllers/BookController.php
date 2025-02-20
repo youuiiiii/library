@@ -59,7 +59,7 @@ class BookController extends Controller
         // ✅ Delete Old Cover If New One is Uploaded
         if ($request->file('cover')) {
 
-            Storage::disk('local')->delete('public/', $book->cover);
+            Storage::disk('local')->delete('public/'. $book->cover);
             $cover = $request->file('cover');
             $cover->storeAs('public', $cover->hashName());
             $book->cover = $cover->hashName();
@@ -81,7 +81,7 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         if($book->cover != 'no-image-placeholder.jpg') {
-            Storage::disk('local')->delete('public/', $book->cover);
+            Storage::disk('local')->delete('public/'. $book->cover);
         }
         $book->delete();
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
