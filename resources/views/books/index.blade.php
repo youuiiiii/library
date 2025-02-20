@@ -4,9 +4,9 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
 
-                    @if (session()->has('success'))
+                    {{-- @if (session()->has('success'))
                         <x-alert message="{{ session('success') }}"></x-alert>
-                    @endif
+                    @endif --}}
                     
                     <div class="flex justify-between items-center">
                         <h2>Book List</h2>
@@ -19,23 +19,25 @@
                         @foreach ($books as $book)
                             <div class="border-b border-gray-200 p-4">
                                 
-                                <div class="w-full h-48 flex items-center justify-center border border-gray-300 bg-gray-100 rounded-md overflow-hidden">
-                                    <img src="{{ url('storage/' . $book->cover) }}" />
+                                <!-- Book Cover Image Container -->
+                                <div class="w-full h-[300px] flex items-center justify-center border border-gray-300 bg-gray-100 rounded-md overflow-hidden">
+                                    <img src="{{ url('storage/' . $book->cover) }}" class="h-full w-auto object-cover" />
                                 </div>
-
+                    
                                 <div class="my-4">
                                     <h3 class="text-xl font-bold">{{ $book->title }}</h3>
                                     <p class="text-sm">{{ $book->author }}</p>
                                     <p class="text-sm">{{ $book->year }}</p>
                                     <p class="text-sm">{{ $book->description }}</p>
                                 </div>
-
+                    
                                 <a href="{{ route('books.edit', $book) }}">
                                     <button class="bg-blue-400 px-10 py-2 rounded-md font-semibold">Edit</button>
                                 </a>
                             </div>
                         @endforeach
                     </div>
+                                      
 
                     <div class="mt-4">
                         {{ $books->links() }}
