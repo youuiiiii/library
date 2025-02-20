@@ -12,27 +12,9 @@ class Book extends Model
 
     protected $fillable = [
         'title',
-        'slug',
         'cover',
         'author',
         'year',
         'description',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($book) {
-            if (empty($book->slug)) {
-                $book->slug = Str::slug($book->title);
-            }
-        });
-
-        static::updating(function ($book) {
-            if (empty($book->slug)) {
-                $book->slug = Str::slug($book->title);
-            }
-        });
-    }
 }

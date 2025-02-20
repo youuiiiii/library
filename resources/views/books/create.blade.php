@@ -21,7 +21,7 @@
 
                                 <div >
                                     <div class="mt-4">
-                                        <x-input-label   for="cover" :value="__('Title')" />
+                                        <x-input-label   for="title" :value="__('Title')" />
                                         <x-text-input id="title" class="block mt-1 w-full" type="text" name="title" :value="old('title')" required/>
                                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                                     </div>
@@ -46,7 +46,7 @@
                                     </div>
 
                                     <div class="mt-4">
-                                        <x-input-label  for="description" :value="__('Book Cover')" />
+                                        <x-input-label  for="cover" :value="__('Book Cover')" />
                                         <x-text-input id="cover" class="block mt-1 w-full border p-2" type="file" accept="image/*" name="cover" :value="old('cover')" required @change="imageUrl = URL.createObjectURL($event.target.files[0])" />
                                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                                     </div>

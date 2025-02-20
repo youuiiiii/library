@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::paginate(6); 
-
+        $books = Book::paginate(6);
         return view('books.index', compact('books'));
     }
 
@@ -25,9 +26,9 @@ class BookController extends Controller
             'title' => 'required',
             'author' => 'required',
             'year' => 'required|integer',
-            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
-        
+
         $cover = $request->file('cover');
         $cover->storeAs('public', $cover->hashName());
 
@@ -39,13 +40,41 @@ class BookController extends Controller
             'cover' => $cover->hashName(),
         ]);
 
-        // Book::create($request->all());
-
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
 
-    public function edit (Book $book)
+    public function edit(Book $book)
     {
         return view('books.edit', compact('book'));
+    }
+
+    public function update(Request $request, Book $book)
+    {
+        $request->validate([
+            'title' => 'required',
+            'author' => 'required',
+            'year' => 'required|integer',
+        ]);
+
+        // ✅ Delete Old Cover If New One is Uploaded
+        if ($request->file('cover')) {
+
+            Storage::disk('local')->delete('public/', $book->cover);
+            $cover = $request->file('cover');
+            $cover->storeAs('public', $cover->hashName());
+            $book->cover = $cover->hashName();
+
+        }
+
+        $book->update();
+        // $book->update([
+        //     'title' => $request->title,
+        //     'author' => $request->author,
+        //     'year' => $request->year,
+        //     'description' => $request->description,
+        //     'cover' => $book->cover,
+        // ]);
+
+        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
 }

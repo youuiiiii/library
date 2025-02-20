@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id(); 
-            $table->string('title'); 
-            $table->string('slug')->unique();
+            $table->string('title');
             $table->string('cover')->default('no-image-placeholder.jpg');
             $table->string('author');
             $table->integer('year');

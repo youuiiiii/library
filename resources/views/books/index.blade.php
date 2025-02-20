@@ -20,9 +20,7 @@
                             <div class="border-b border-gray-200 p-4">
                                 
                                 <div class="w-full h-48 flex items-center justify-center border border-gray-300 bg-gray-100 rounded-md overflow-hidden">
-                                    <img src="{{ $book->cover ? url('storage/'. $book->cover) : asset('no-image-placeholder.jpg') }}" 
-                                         alt="Book Cover" 
-                                         class="object-cover w-full h-full">
+                                    <img src="{{ url('storage/' . $book->cover) }}" />
                                 </div>
 
                                 <div class="my-4">
