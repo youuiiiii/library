@@ -6,6 +6,7 @@
                     
                     <div class="flex justify-between items-center">
                         <h2>Edit Book</h2>
+                        @include('books.delete')
                     </div>
 
                     <div class="mt-4" x-data="{ imageUrl: '/storage/{{ $book->cover }}' }">

@@ -77,4 +77,13 @@ class BookController extends Controller
 
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
+
+    public function destroy(Book $book)
+    {
+        if($book->cover != 'no-image-placeholder.jpg') {
+            Storage::disk('local')->delete('public/', $book->cover);
+        }
+        $book->delete();
+        return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+    }
 }
