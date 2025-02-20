@@ -13,12 +13,22 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    
+    //everyone can view books
     Route::get('/books', [BookController::class, 'index'])->name('books.index'); 
-    Route::get('/books/create', [BookController::class, 'create'])->name('books.create'); 
-    Route::post('/books', [BookController::class, 'store'])->name('books.store');
-    Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
-    Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
-    Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+
+    //only admin and editor can create and edit books
+    Route::middleware(['role:admin, editor'])->group(function () {
+        Route::get('/books/create', [BookController::class, 'create'])->name('books.create'); 
+        Route::post('/books', [BookController::class, 'store'])->name('books.store');
+        Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
+        Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
+    });
+    
+    //only admin can delete books
+    Route::middleware('role:admin')->group(function () {
+        Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+    });
 
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

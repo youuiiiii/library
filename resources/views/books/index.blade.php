@@ -10,9 +10,14 @@
                     
                     <div class="flex justify-between items-center">
                         <h2>Book List</h2>
-                        <a href="{{ route('books.create') }}">
-                            <button class="bg-blue-400 px-10 py-2 rounded-md font-semibold">Add Book</button>
-                        </a>
+
+                        {{-- Only Admin and Editor can add books --}}
+                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'editor')
+                            <a href="{{ route('books.create') }}">
+                                <button class="bg-blue-400 px-10 py-2 rounded-md font-semibold">Add Book</button>
+                            </a>
+                        @endif
+                        
                     </div>
 
                     <div class="grid md:grid-cols-3 grid-cols-2 gap-4">
@@ -30,10 +35,15 @@
                                     <p class="text-sm">{{ $book->year }}</p>
                                     <p class="text-sm">{{ $book->description }}</p>
                                 </div>
-                    
-                                <a href="{{ route('books.edit', $book) }}">
-                                    <button class="bg-blue-400 px-10 py-2 rounded-md font-semibold">Edit</button>
-                                </a>
+                                
+                                {{-- Only Admin and Editor can edit books --}}
+                                @if (auth()->user()->role === 'admin' || auth()->user()->role === 'editor')
+                                    <a href="{{ route('books.edit', $book) }}">
+                                        <button class="bg-blue-400 px-10 py-2 rounded-md font-semibold">Edit</button>
+                                    </a>
+                                    
+                                @endif
+                                
                             </div>
                         @endforeach
                     </div>

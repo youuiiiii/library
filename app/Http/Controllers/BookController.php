@@ -6,6 +6,8 @@ use App\Models\Book;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class BookController extends Controller
 {
@@ -17,11 +19,19 @@ class BookController extends Controller
 
     public function create()
     {
+        if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
+            abort(403, 'Unauthorized action.');
+        }
         return view('books.create');
     }
 
     public function store(Request $request)
     {
+
+        if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'title' => 'required',
             'author' => 'required',
@@ -45,18 +55,27 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
+
+        if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('books.edit', compact('book'));
     }
 
     public function update(Request $request, Book $book)
     {
+
+        if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'title' => 'required',
             'author' => 'required',
             'year' => 'required|integer',
         ]);
 
-        // ✅ Delete Old Cover If New One is Uploaded
         if ($request->file('cover')) {
 
             Storage::disk('local')->delete('public/'. $book->cover);
@@ -80,6 +99,11 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
         if($book->cover != 'no-image-placeholder.jpg') {
             Storage::disk('local')->delete('public/'. $book->cover);
         }

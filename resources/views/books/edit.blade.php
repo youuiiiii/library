@@ -6,7 +6,12 @@
                     
                     <div class="flex justify-between items-center">
                         <h2>Edit Book</h2>
-                        @include('books.delete')
+                        
+                        {{-- Only Admin can delete books --}}
+                        @if (auth()->user()->role === 'admin')
+                            @include('books.delete')
+                        @endif
+                        
                     </div>
 
                     <div class="mt-4" x-data="{ imageUrl: '/storage/{{ $book->cover }}' }">
