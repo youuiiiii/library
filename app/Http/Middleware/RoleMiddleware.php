@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,12 +19,15 @@ class RoleMiddleware
     {
         // Check if user is authenticated
         if (!Auth::check()) {
-            abort(403, 'Unauthorized.');
+            abort(403, 'Unauthorized (Not Authenticated).');
         }
 
+        $userRole = Auth::user()->role;
+        Log::info("RoleMiddleware: User Role = " . $userRole);
+
         // Check if user has the required role
-        if (!in_array(Auth::user()->role, $roles)) {
-            abort(403, 'Unauthorized action.');
+        if (!in_array($userRole, $roles)) {
+            abort(403, 'Unauthorized (Invalid Role).');
         }
 
         return $next($request);
