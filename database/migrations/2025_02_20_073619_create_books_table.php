@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); 
             $table->string('title'); 
             $table->string('slug')->unique();
-            $table->string('cover')->nullable();
+            $table->string('cover')->default('no-image-placeholder.jpg');
             $table->string('author');
             $table->integer('year');
             $table->text('description')->nullable();
