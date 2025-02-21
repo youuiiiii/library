@@ -12,28 +12,28 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+// Route::middleware('auth')->group(function () {
     
-    //everyone can view books
-    Route::get('/books', [BookController::class, 'index'])->name('books.index'); 
+//     //everyone can view books
+//     Route::get('/books', [BookController::class, 'index'])->name('books.index'); 
 
-    //only admin and editor can create and edit books
-    Route::middleware(['role:admin,editor'])->group(function () {
-        Route::get('/books/create', [BookController::class, 'create'])->name('books.create'); 
-        Route::post('/books', [BookController::class, 'store'])->name('books.store');
-        Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
-        Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
-    });
+//     //only admin and editor can create and edit books
+//     Route::middleware(['role:admin,editor'])->group(function () {
+//         Route::get('/books/create', [BookController::class, 'create'])->name('books.create'); 
+//         Route::post('/books', [BookController::class, 'store'])->name('books.store');
+//         Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
+//         Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
+//     });
     
-    //only admin can delete books
-    Route::middleware('role:admin')->group(function () {
-        Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
-    });
+//     //only admin can delete books
+//     Route::middleware('role:admin')->group(function () {
+//         Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+//     });
 
     
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 require __DIR__.'/auth.php';

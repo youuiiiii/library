@@ -3,27 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Resources\BookResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 class BookController extends Controller
 {
     public function index()
     {
-        $books = Book::paginate(6);
-        return view('books.index', compact('books'));
+        $books = Book::latest()->paginate(6);
+        return new BookResource(true, 'Data retrieved successfully.', $books);
     }
 
-    public function create()
-    {
-        if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
-            abort(403, 'Unauthorized action.');
-        }
-        return view('books.create');
-    }
 
     public function store(Request $request)
     {
@@ -32,82 +25,87 @@ class BookController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required',
             'author' => 'required',
             'year' => 'required|integer',
+            'description' => 'nullable',
             'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
         $cover = $request->file('cover');
-        $cover->storeAs('public', $cover->hashName());
+        $cover->storeAs('public/cover', $cover->hashName());
 
-        Book::create([
-            'title' => $request->title,
-            'author' => $request->author,
-            'year' => $request->year,
-            'description' => $request->description,
+        $book = Book::create([
+            'title' => $validated['title'],
+            'author' => $validated['author'],
+            'year' => $validated['year'],
+            'description' => $validated['description'] ?? null,
             'cover' => $cover->hashName(),
         ]);
 
-        return redirect()->route('books.index')->with('success', 'Book created successfully.');
+        return new BookResource(true, 'Book created successfully.', $book);
     }
 
-    public function edit(Book $book)
+    public function show($id)
     {
-
-        if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return view('books.edit', compact('book'));
+        $book = Book::find($id);
+        return new BookResource(true, 'Data retrieved successfully.', $book);
     }
 
     public function update(Request $request, Book $book)
     {
-
+        // Authorization check
         if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
             abort(403, 'Unauthorized action.');
         }
-
-        $request->validate([
-            'title' => 'required',
-            'author' => 'required',
-            'year' => 'required|integer',
+    
+        // Validate input
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'year' => 'required|integer|min:1000|max:' . date('Y'),
+            'description' => 'nullable|string',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
-
-        if ($request->file('cover')) {
-
-            Storage::disk('local')->delete('public/'. $book->cover);
-            $cover = $request->file('cover');
-            $cover->storeAs('public', $cover->hashName());
-            $book->cover = $cover->hashName();
-
+    
+        // Handle file upload
+        if ($request->hasFile('cover')) {
+            // Delete old cover
+            Storage::disk('public')->delete('cover/' . $book->cover);
+    
+            // Store new cover
+            $coverPath = $request->file('cover')->store('public/cover');
+            $validated['cover'] = basename($coverPath);
         }
-
-        // $book->update();
-        $book->update([
-            'title' => $request->title,
-            'author' => $request->author,
-            'year' => $request->year,
-            'description' => $request->description,
-            'cover' => $book->cover,
-        ]);
-
-        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
+    
+        // Update book with validated data
+        $book->update($validated);
+    
+        return new BookResource(true, 'Book updated successfully.', $book);
     }
+    
 
-    public function destroy(Book $book)
+    public function destroy($id)
     {
         
         if (Auth::user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
 
-        if($book->cover != 'no-image-placeholder.jpg') {
-            Storage::disk('local')->delete('public/'. $book->cover);
-        }
+        //find book by id
+        $book = Book::find($id);
+
+        Storage::delete('public/cover/' . $book->cover);
+
+
+        // if($book->cover != 'no-image-placeholder.jpg') {
+        //     Storage::disk('local')->delete('public/'. $book->cover);
+        // }
+        
         $book->delete();
-        return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+
+        return new BookResource(true, 'Book deleted successfully.', $book);
+
     }
 }
