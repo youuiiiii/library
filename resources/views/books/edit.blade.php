@@ -54,7 +54,7 @@
 
                                     <div class="mt-4">
                                         <x-input-label  for="description" :value="__('Book Cover')" />
-                                        <x-text-input id="cover" class="block mt-1 w-full border p-2" type="file" accept="image/*" name="cover" :value="$book->cover" required @change="imageUrl = URL.createObjectURL($event.target.files[0])" />
+                                        <x-text-input id="cover" class="block mt-1 w-full border p-2" type="file" accept="image/*" name="cover" :value="$book->cover"  @change="imageUrl = URL.createObjectURL($event.target.files[0])" />
                                         <x-input-error :messages="$errors->get('title')" class="mt-2" />
                                     </div>
                                 </div>

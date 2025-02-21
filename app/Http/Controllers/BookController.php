@@ -85,14 +85,14 @@ class BookController extends Controller
 
         }
 
-        $book->update();
-        // $book->update([
-        //     'title' => $request->title,
-        //     'author' => $request->author,
-        //     'year' => $request->year,
-        //     'description' => $request->description,
-        //     'cover' => $book->cover,
-        // ]);
+        // $book->update();
+        $book->update([
+            'title' => $request->title,
+            'author' => $request->author,
+            'year' => $request->year,
+            'description' => $request->description,
+            'cover' => $book->cover,
+        ]);
 
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
