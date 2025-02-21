@@ -7,10 +7,18 @@ use Illuminate\Http\Request;
 use App\Http\Resources\BookResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controller;
 
 
 class BookController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum'); // Ensure user is authenticated
+        $this->middleware('role:editor,admin')->only(['store', 'update']);
+        $this->middleware('role:admin')->only(['destroy']);
+    }
+
     public function index()
     {
         $books = Book::latest()->paginate(6);
@@ -47,11 +55,13 @@ class BookController extends Controller
         return new BookResource(true, 'Book created successfully.', $book);
     }
 
+    
     public function show($id)
     {
         $book = Book::find($id);
         return new BookResource(true, 'Data retrieved successfully.', $book);
     }
+
 
     public function update(Request $request, Book $book)
     {
