@@ -1,4 +1,4 @@
-<section class="space-y-6">
+{{-- <section class="space-y-6">
 
     <x-danger-button
         x-data=""
@@ -25,4 +25,4 @@
             </div>
         </form>
     </x-modal>
-</section>
+</section> --}}
