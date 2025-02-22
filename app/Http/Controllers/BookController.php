@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use App\Http\Resources\BookResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Routing\Controller;
 
 
 class BookController extends Controller
@@ -63,37 +64,46 @@ class BookController extends Controller
     }
 
 
-    public function update(Request $request, Book $book)
-    {
-        // Authorization check
-        if (!in_array(Auth::user()->role, ['admin', 'editor'])) {
-            abort(403, 'Unauthorized action.');
-        }
-    
-        // Validate input
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'year' => 'required|integer|min:1000|max:' . date('Y'),
-            'description' => 'nullable|string',
-            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
-        ]);
-    
-        // Handle file upload
-        if ($request->hasFile('cover')) {
-            // Delete old cover
-            Storage::disk('public')->delete('cover/' . $book->cover);
-    
-            // Store new cover
-            $coverPath = $request->file('cover')->store('public/cover');
-            $validated['cover'] = basename($coverPath);
-        }
-    
-        // Update book with validated data
-        $book->update($validated);
-    
-        return new BookResource(true, 'Book updated successfully.', $book);
+    public function update(Request $request, $id)
+{
+    // Log the request data
+    Log::info('Update Request Data:', $request->all());
+
+    // Find the book
+    $book = Book::find($id);
+
+    // Log the book before update
+    Log::info('Book Before Update:', $book ? $book->toArray() : ['error' => 'Book not found']);
+
+    if (!$book) {
+        return response()->json(['message' => 'Book not found'], 404);
     }
+
+    // Validate input
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'author' => 'required|string|max:255',
+        'year' => 'required|integer|min:1000|max:' . date('Y'),
+        'description' => 'nullable|string',
+        'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+    ]);
+
+    // Handle file upload
+    if ($request->hasFile('cover')) {
+        // Delete old cover
+        Storage::disk('public')->delete('cover/' . $book->cover);
+
+        // Store new cover
+        $coverPath = $request->file('cover')->store('public/cover');
+        $validated['cover'] = basename($coverPath);
+    }
+
+    // Update book with validated data
+    $book->update($validated);
+
+    return response()->json(['success' => true, 'message' => 'Book updated successfully.', 'data' => $book]);
+}
+
     
 
     public function destroy($id)
