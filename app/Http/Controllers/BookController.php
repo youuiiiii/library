@@ -98,7 +98,6 @@ class BookController extends Controller
         $validated['cover'] = basename($coverPath);
     }
 
-    // Update book with validated data
     $book->update($validated);
 
     return response()->json(['success' => true, 'message' => 'Book updated successfully.', 'data' => $book]);
